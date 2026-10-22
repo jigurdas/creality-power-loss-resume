@@ -5,6 +5,10 @@
 # with "SDCARD_PRINT_FILE ... ISCONTINUEPRINT=1". The stock display-server
 # used to ask the user and send that command; this module does the same via
 # "action:prompt" dialogs, which Fluidd, Mainsail and GuppyScreen render.
+#
+# Copyright (C) 2026  jigurdas
+#
+# This file may be distributed under the terms of the GNU GPLv3 license.
 import os, json, logging
 
 INFO_PATH = "/usr/data/creality/userdata/config/print_file_name.json"

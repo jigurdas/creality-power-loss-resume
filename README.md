@@ -78,3 +78,7 @@ It backs up and removes the module, `plr.cfg`, the include line and the Update M
 ```sh
 ./tests/validate.sh
 ```
+
+## License
+
+GPL-3.0, the same license as Klipper. See [LICENSE](LICENSE).
