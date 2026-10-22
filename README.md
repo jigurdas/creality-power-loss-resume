@@ -57,11 +57,11 @@ The installer keeps an existing `plr.cfg` on updates.
 
 Tested on an Ender-3 V3 KE with Guppy Screen: the power was cut at layer 8 of a small PLA print, the dialog appeared after boot, and **Resume** continued the print.
 
-Known open points from that test, not yet investigated:
+What the log of that test showed:
 
-- Some error messages were shown on the screen during the restore.
-- The part-cooling fan did not seem to come back as before.
-- The print was very slow after resuming. Creality's restore deliberately prints the next layer at 20% speed (`M220 S20`) and should then return to the previous speed; if it stays slow, set the speed back with `M220 S100`.
+- The restore reported `Unknown command: SOFT_CHECK_ERROR` twice. Creality's restore wraps its X/Y homing in that command from `soft_homing.py`, which setups with their own homing (such as the Helper Script's `sensorless.cfg`) don't load. Since v0.1.2 the module provides a no-op `SOFT_CHECK_ERROR` when none exists.
+- The part-cooling fan was restored to the last `M106` before the stop point (`M106 S125`). It stays off while the nozzle reheats and comes on just before homing.
+- Creality's restore prints the next layer at 20% speed (`M220 S20`) and then returns to the previous speed; in the test that took about a minute. If it stays slow, set the speed back with `M220 S100`.
 
 Before trusting it with a long print, run your own short test: start a small print, switch the power off after a few layers, switch it back on, press **Resume** and stay next to the printer. Z is not homed during the restore (the part is in the way): the first X/Y homing lifts Z by 5 mm, and the nozzle height comes from the saved position. Do not move Z by hand while the power is off.
 

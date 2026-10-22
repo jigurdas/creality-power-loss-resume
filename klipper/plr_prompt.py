@@ -22,6 +22,8 @@ class PLRPrompt:
         self.delay = config.getfloat('delay', 10., minval=0.)
         self.gcodes_dir = os.path.normpath(os.path.expanduser(config.get(
             'gcodes_dir', '/usr/data/printer_data/gcodes'))) + '/'
+        self.printer.register_event_handler("klippy:connect",
+                                            self._handle_connect)
         self.printer.register_event_handler("klippy:ready", self._handle_ready)
         self.gcode.register_command("PLR_CHECK", self.cmd_PLR_CHECK,
                                     desc="Ask to resume a power-lost print")
@@ -29,6 +31,18 @@ class PLRPrompt:
                                     desc="Resume a power-lost print")
         self.gcode.register_command("PLR_DISCARD", self.cmd_PLR_DISCARD,
                                     desc="Forget a power-lost print")
+    def _handle_connect(self):
+        # Creality's restore wraps its X/Y homing in SOFT_CHECK_ERROR, which
+        # comes from soft_homing.py. Setups with their own homing (e.g. the
+        # Helper Script's sensorless.cfg) don't load it, and the restore then
+        # reports "Unknown command" twice. Provide a no-op in that case.
+        try:
+            self.gcode.register_command("SOFT_CHECK_ERROR",
+                                        self.cmd_SOFT_CHECK_ERROR)
+        except Exception:
+            pass
+    def cmd_SOFT_CHECK_ERROR(self, gcmd):
+        pass
     def _handle_ready(self):
         # Ask twice in case the screen wasn't connected yet the first time;
         # a repeated prompt_begin just replaces the open dialog
