@@ -69,10 +69,13 @@ cp -p "$PRINTER_CFG" "$BACKUP_DIR/printer.cfg"
 [ ! -f "$TARGET_MODULE" ] || cp -p "$TARGET_MODULE" "$BACKUP_DIR/plr_prompt.py"
 [ ! -f "$MOONRAKER_CFG" ] || cp -p "$MOONRAKER_CFG" "$BACKUP_DIR/moonraker.conf"
 
-# The module goes first: plr.cfg's [plr_prompt] section needs it
+# The module goes first: plr.cfg's [plr_prompt] section needs it. It is a
+# symlink into the Update Manager checkout, so an update from Fluidd or
+# Mainsail (git pull, then a Klipper service restart by Moonraker) applies
+# it; Moonraker does not run this script on updates.
 TMP_TARGET="$TARGET_MODULE.$$"
-cp "$SELF_DIR/klipper/plr_prompt.py" "$TMP_TARGET"
-mv "$TMP_TARGET" "$TARGET_MODULE"
+ln -s "$UPDATE_DIR/klipper/plr_prompt.py" "$TMP_TARGET"
+mv -f "$TMP_TARGET" "$TARGET_MODULE"
 # Keep a user-edited plr.cfg (e.g. a changed delay) on updates
 if [ ! -f "$TARGET_CFG" ]; then
     TMP_TARGET="$TARGET_CFG.$$"

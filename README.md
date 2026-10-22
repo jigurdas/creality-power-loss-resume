@@ -36,7 +36,11 @@ SSH into the printer and run:
 git clone --depth=1 https://github.com/jigurdas/creality-power-loss-resume.git /tmp/plr && sh /tmp/plr/install.sh
 ```
 
-The installer checks the firmware, backs up `printer.cfg` and `moonraker.conf`, installs `plr_prompt.py` into `klippy/extras` and `plr.cfg` into the config folder, adds `[include plr.cfg]`, registers the repository with Moonraker Update Manager, and restarts the Klipper and Moonraker services. If Klipper then reports that the MCU is shut down, run `FIRMWARE_RESTART` once.
+The installer checks the firmware, backs up `printer.cfg` and `moonraker.conf`, keeps a git checkout in `creality-power-loss-resume`, symlinks `klippy/extras/plr_prompt.py` to the module in that checkout, copies `plr.cfg` into the config folder, adds `[include plr.cfg]`, registers the repository with Moonraker Update Manager, and restarts the Klipper and Moonraker services. If Klipper then reports that the MCU is shut down, run `FIRMWARE_RESTART` once.
+
+## Updates
+
+The project shows up in the Fluidd/Mainsail update list as **creality-power-loss-resume**. Press **Update** there: Moonraker pulls the new version and restarts Klipper, and because `klippy/extras/plr_prompt.py` is a symlink into the checkout, the new module is live after that restart. Your `plr.cfg` is a copy and is never overwritten. Installs from before v0.1.3 copied the module; run the installer once more to switch to the link.
 
 A Creality firmware update replaces `klippy/extras` and removes `plr_prompt.py`. Run the installer again afterwards, or Klipper stops with an unknown `[plr_prompt]` section.
 

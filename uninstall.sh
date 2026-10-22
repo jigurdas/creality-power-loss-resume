@@ -31,8 +31,10 @@ if [ -f "$TARGET_CFG" ]; then
 fi
 
 for dir in "${KLIPPER_EXTRAS:-}" /usr/share/klipper/klippy/extras "$HOME/klipper/klippy/extras"; do
-    if [ -n "$dir" ] && [ -f "$dir/plr_prompt.py" ]; then
-        mv "$dir/plr_prompt.py" "$BACKUP_DIR/plr_prompt.py"
+    # -L as well: the installer symlinks into the checkout, which may be gone
+    if [ -n "$dir" ] && { [ -f "$dir/plr_prompt.py" ] || [ -L "$dir/plr_prompt.py" ]; }; then
+        [ ! -f "$dir/plr_prompt.py" ] || cp -p "$dir/plr_prompt.py" "$BACKUP_DIR/plr_prompt.py"
+        rm -f "$dir/plr_prompt.py"
         echo "Removed $dir/plr_prompt.py"
     fi
 done
